@@ -191,7 +191,7 @@ to await time-intensive tasks that rely on networking, File I/O or CPU-intensive
 
 Doing so nonetheless might result in the following: 
 
-1. **MacOS disables a dispatcher's backing event tap ((kCGEventTapDisabledByTimeout)[https://developer.apple.com/documentation/coregraphics/cgeventtype/kcgeventtapdisabledbytimeout?language=swift]).** 
+1. **MacOS disables a dispatcher's backing event tap ([kCGEventTapDisabledByTimeout](https://developer.apple.com/documentation/coregraphics/cgeventtype/kcgeventtapdisabledbytimeout?language=swift)).** 
 It will be re-enabled automatically.
 2. **MacOS ignores the `PostProcessHIDEventInstruction`**, effectively replacing it with `.bypass` behaviour. 
 
