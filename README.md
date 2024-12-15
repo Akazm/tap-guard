@@ -14,12 +14,19 @@ It offers tools for managing multiple event streams and receivers in a concurren
 
 ## Installation
 
-Add the package to your `Package.swift`:
+Add the package to your `Package.swift` package dependencies:
 
 ```swift
-dependencies: [
-    .package(url: "<repository_url>", from: "1.0.0")
-]
+    dependencies: [
+        .package(url: "https://github.com/Akazm/osx-tap-guard", from: "0.9.0")
+    ]
+```
+Then, add `TapGuard` to your target's dependencies:
+
+```swift
+    dependencies: [
+        .product(name: "TapGuard", package: "tap-guard")
+    ]
 ```
 
 ## Usage
