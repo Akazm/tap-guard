@@ -56,10 +56,10 @@ For event processing to function as one might expect already by now, several con
 - **HIDEventDispatcher is enabled**
 - **Accessibility API access must have been granted:** Access to the macOS Accessibility API must be granted by the 
 application's user. Prompting the user to grant access is out of scope for this package, but a `HIDEventDispatcher` 
-attributes for Accessibility API. 
+attributes for the Accessibility API access status. 
 
-Unless or when all of the above conditions have been met, a `HIDEventDispatcher` will automatically remove or add the 
-installed CGEventTap. 
+_Unless_ or _when_ all of the above conditions have been met, a `HIDEventDispatcher` will automatically _remove_ or 
+_install_ the backing CGEventTap. 
 
 ### Processing events
 
@@ -104,7 +104,7 @@ class MyReceiver: HIDEventReceiver {
 Event processing happens within the closure specified for the defined `HIDEventProcessor`. In the example, the closure
 returns a `PostProcessHIDEventInstruction` to specify how to postprocess the event after the closure exited.
 
-Async event processing is an opt-in and enabled by using a `async` processor instead.
+To enable async event processing, use an `async` processor instead.
 
 ```swift
 class MyAsyncReceiver: HIDEventReceiver {
