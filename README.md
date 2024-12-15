@@ -37,7 +37,7 @@ TapGuard provides a convenient way to initialize a `HIDEventDispatcher` with a b
 [CGEventTap](https://developer.apple.com/documentation/coregraphics/1454426-cgeventtapcreate).
 
 ```swift
-import HIDEventDispatcher
+import TapGuard
 
 let dispatcher = HIDEventDispatcher.systemDispatcher(
     enabled: true,
