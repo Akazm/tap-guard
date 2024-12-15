@@ -26,7 +26,7 @@ dependencies: [
 
 ### Create a `HIDEventDispatcher`
 
-<PACKAGE NAME> provides a convenient way to initialize a `HIDEventDispatcher` with a backing 
+TapGuard provides a convenient way to initialize a `HIDEventDispatcher` with a backing 
 [CGEventTap](https://developer.apple.com/documentation/coregraphics/1454426-cgeventtapcreate).
 
 ```swift
