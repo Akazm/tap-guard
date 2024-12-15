@@ -5,6 +5,25 @@ import Foundation
 import Testing
 
 @Suite("HIDEventDispatcher Tests") struct HIDEventDispatcherTests {
+    
+    @Test("HIDEventDispatcher will be automatically re-enabled") func reenableDispatcher() async throws {
+        let (dispatcher, eventSource, _) = makeTestDispatcher()
+        let receiver = dispatcher.addReceiver { _ in }
+        eventSource.raise(
+            eventOfType: .tapDisabledByTimeout,
+            event: .init(keyboardEventSource: nil, virtualKey: 16, keyDown: false)!
+        )
+        while dispatcher.isEnabled() {
+            continue
+        }
+        while !dispatcher.isEnabled() {
+            continue
+        }
+        try? await Task.sleep(seconds: 0.01)
+        #expect(dispatcher.isEnabled())
+        receiver.remove()
+    }
+    
     @Test("HIDEventReceiver proxy") func hidEventReceiverProxy() async throws {
         let (dispatcher, _, _) = makeTestDispatcher()
         final class Receiver: HIDEventReceiver {
