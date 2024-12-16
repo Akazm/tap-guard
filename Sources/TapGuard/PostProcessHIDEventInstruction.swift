@@ -1,4 +1,4 @@
-/// Instructs the ``HIDEventDispatcher``how to postprocess a received event
+/// Instructs the ``HIDEventDispatcher`` how to postprocess a received event
 public enum PostProcessHIDEventInstruction: Sendable {
     /// Instructs the ``HIDEventDispatcher`` to retain an event, preventing it from further processing by the  pipeline and the OS
     case retain

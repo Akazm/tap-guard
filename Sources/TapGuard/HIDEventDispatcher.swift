@@ -147,7 +147,7 @@ public final class HIDEventDispatcher: Sendable {
         }
     }
 
-    /// Disables ( `false`) or enables (`true`) event processing
+    /// Disables (`false`) or enables (`true`) event processing
     public func setEnabled(_ value: Bool) {
         if value == enabledOverride.load(ordering: .sequentiallyConsistent) {
             return

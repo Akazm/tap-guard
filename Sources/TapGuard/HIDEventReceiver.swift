@@ -43,7 +43,7 @@ public extension HIDEventReceiver {
     }
 }
 
-/// An event receiver that may be removed from a ``HIDEventDispatcher`` by calling ``DisposableHIDEventReceiver/remove``
+/// An event receiver that may be removed from a ``HIDEventDispatcher``  by calling ``DisposableHIDEventReceiver/remove``
 public protocol DisposableHIDEventReceiver: Sendable {
     /// Removes this receiver's registration from the event processing pipeline
     var remove: @Sendable () -> Void { get }
