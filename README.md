@@ -18,7 +18,7 @@ Add the package to your `Package.swift` package dependencies:
 
 ```swift
     dependencies: [
-        .package(url: "https://github.com/Akazm/osx-tap-guard", from: "0.9.0")
+        .package(url: "https://github.com/Akazm/osx-tap-guard", from: "1.0.0")
     ]
 ```
 Then, add `TapGuard` to your target's dependencies:
