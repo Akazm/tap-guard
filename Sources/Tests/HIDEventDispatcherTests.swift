@@ -8,20 +8,39 @@ import Testing
     
     @Test("HIDEventDispatcher will be automatically re-enabled") func reenableDispatcher() async throws {
         let (dispatcher, eventSource, _) = makeTestDispatcher()
+        var observedPrequisites = [HIDEventDispatcherEnabledPrerequisite]()
+        let observationStream = AsyncStream<HIDEventDispatcherEnabledPrerequisite> { [weak dispatcher] continuation in
+            guard let dispatcher else {
+                return
+            }
+            var previouslySatisfiedPrequisites = dispatcher.dispatchingPrerequisites
+            continuation.yield(previouslySatisfiedPrequisites)
+            Task {
+                while true {
+                    let newPrequisites = dispatcher.dispatchingPrerequisites
+                    if newPrequisites != previouslySatisfiedPrequisites {
+                        continuation.yield(newPrequisites)
+                        previouslySatisfiedPrequisites = newPrequisites
+                    }
+                }
+            }
+        }
         let receiver = dispatcher.addReceiver { _ in }
+        let observationTask = Task {
+            for await prequisite in observationStream {
+                observedPrequisites.append(prequisite)
+            }
+        }
+        try? await Task.sleep(seconds: 0.5)
         eventSource.raise(
             eventOfType: .tapDisabledByTimeout,
             event: .init(keyboardEventSource: nil, virtualKey: 16, keyDown: false)!
         )
-        while dispatcher.isEnabled() {
-            continue
-        }
-        while !dispatcher.isEnabled() {
-            continue
-        }
-        try? await Task.sleep(seconds: 0.01)
-        #expect(dispatcher.isEnabled())
+        try? await Task.sleep(seconds: 0.5)
+        let latestValues = observedPrequisites.suffix(2)
+        #expect(latestValues.first?.contains(.enabled) == false && latestValues.last?.contains(.enabled) == true)
         receiver.remove()
+        observationTask.cancel()
     }
     
     @Test("HIDEventReceiver proxy") func hidEventReceiverProxy() async throws {
