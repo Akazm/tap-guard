@@ -2,8 +2,7 @@ import AllocatedUnfairLockShim
 import CoreGraphics
 import Foundation
 
-/// Arguments required for ``HIDEventDispatcherEventTapSource``
-public typealias EventTapSourceArgs = (eventsOfInterest: CGEventMask, eventTapLocation: CGEventTapLocation)
+typealias EventTapSourceArgs = (eventsOfInterest: CGEventMask, eventTapLocation: CGEventTapLocation)
 
 /// A ``HIDEventDispatcherEventSource`` with a backing
 /// [CGEventTap](https://developer.apple.com/documentation/coregraphics/1454426-cgeventtapcreate)

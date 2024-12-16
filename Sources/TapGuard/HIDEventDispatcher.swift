@@ -56,7 +56,7 @@ public final class HIDEventDispatcher: Sendable {
     /// - Returns: An object that can be removed from this `HIDEventDispatcher` by calling ``HIDEventReceiverClosure/remove``
     public func addReceiver(
         _ receiver: @escaping @Sendable (CopiedCGEvent) -> Void
-    ) -> HIDEventReceiverClosure {
+    ) -> AnyHIDEventReceiver {
         addReceiver { event in
             receiver(event)
             return .pass
@@ -68,7 +68,7 @@ public final class HIDEventDispatcher: Sendable {
     /// - Returns: An object that can be removed from this `HIDEventDispatcher` by calling ``HIDEventReceiverClosure/remove``
     public func addReceiver(
         _ receiver: @escaping @Sendable (CopiedCGEvent) -> PostProcessHIDEventInstruction
-    ) -> HIDEventReceiverClosure {
+    ) -> AnyHIDEventReceiver {
         let box = UncheckedWeakSendable<HIDEventReceiverClosure>(nil)
         let newReceiver = HIDEventReceiverClosure(closure: receiver) { [weak self] in
             if let newReceiver = box.value {
@@ -86,7 +86,7 @@ public final class HIDEventDispatcher: Sendable {
     /// - Returns: An object that can be removed from this `HIDEventDispatcher` by calling ``HIDEventReceiverClosure/remove``
     public func addReceiver(
         _ receiver: @escaping @Sendable (CopiedCGEvent) async -> Void
-    ) -> HIDEventReceiverClosure {
+    ) -> AnyHIDEventReceiver {
         addReceiver { event in
             await receiver(event)
             return .pass
@@ -99,7 +99,7 @@ public final class HIDEventDispatcher: Sendable {
     /// - Returns: An object that can be removed from this `HIDEventDispatcher` by calling ``HIDEventReceiverClosure/remove``
     public func addReceiver(
         _ receiver: @escaping @Sendable (CopiedCGEvent) async -> PostProcessHIDEventInstruction
-    ) -> HIDEventReceiverClosure {
+    ) -> AnyHIDEventReceiver {
         let box = UncheckedWeakSendable<HIDEventReceiverClosure>(nil)
         let newReceiver = HIDEventReceiverClosure(closure: receiver) { [weak self] in
             if let newReceiver = box.value {
@@ -114,7 +114,7 @@ public final class HIDEventDispatcher: Sendable {
     /// Adds a ``HIDEventReceiver`` to the event processing pipeline.
     ///
     /// - Returns: An object that can be removed from this `HIDEventDispatcher` by calling ``HIDEventReceiverProxy/remove``
-    public func addReceiver(_ receiver: HIDEventReceiver & AnyObject) -> some AnyHIDEventReceiver {
+    public func addReceiver(_ receiver: HIDEventReceiver & AnyObject) -> AnyHIDEventReceiver {
         let box = UncheckedWeakSendable<HIDEventReceiverProxy>(nil)
         let newReceiver = HIDEventReceiverProxy(actual: receiver) { [weak self] in
             if let newReceiver = box.value {
