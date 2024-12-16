@@ -56,7 +56,7 @@ public final class HIDEventDispatcher: Sendable {
     /// - Returns: An object that can be removed from this `HIDEventDispatcher` by calling ``HIDEventReceiverClosure/remove``
     public func addReceiver(
         _ receiver: @escaping @Sendable (CopiedCGEvent) -> Void
-    ) -> AnyHIDEventReceiver {
+    ) -> HIDEventReceiverClosure {
         addReceiver { event in
             receiver(event)
             return .pass
@@ -68,7 +68,7 @@ public final class HIDEventDispatcher: Sendable {
     /// - Returns: An object that can be removed from this `HIDEventDispatcher` by calling ``HIDEventReceiverClosure/remove``
     public func addReceiver(
         _ receiver: @escaping @Sendable (CopiedCGEvent) -> PostProcessHIDEventInstruction
-    ) -> AnyHIDEventReceiver {
+    ) -> HIDEventReceiverClosure {
         let box = UncheckedWeakSendable<HIDEventReceiverClosure>(nil)
         let newReceiver = HIDEventReceiverClosure(closure: receiver) { [weak self] in
             if let newReceiver = box.value {
@@ -86,7 +86,7 @@ public final class HIDEventDispatcher: Sendable {
     /// - Returns: An object that can be removed from this `HIDEventDispatcher` by calling ``HIDEventReceiverClosure/remove``
     public func addReceiver(
         _ receiver: @escaping @Sendable (CopiedCGEvent) async -> Void
-    ) -> AnyHIDEventReceiver {
+    ) -> HIDEventReceiverClosure {
         addReceiver { event in
             await receiver(event)
             return .pass
@@ -99,7 +99,7 @@ public final class HIDEventDispatcher: Sendable {
     /// - Returns: An object that can be removed from this `HIDEventDispatcher` by calling ``HIDEventReceiverClosure/remove``
     public func addReceiver(
         _ receiver: @escaping @Sendable (CopiedCGEvent) async -> PostProcessHIDEventInstruction
-    ) -> AnyHIDEventReceiver {
+    ) -> HIDEventReceiverClosure {
         let box = UncheckedWeakSendable<HIDEventReceiverClosure>(nil)
         let newReceiver = HIDEventReceiverClosure(closure: receiver) { [weak self] in
             if let newReceiver = box.value {
