@@ -46,12 +46,12 @@ let dispatcher = HIDEventDispatcher.systemDispatcher(
 )
 ```
 
-### Satisfying prequesites
+### Satisfying prerequesites
 
 For event processing to function as one might expect already by now, several conditions must be met.
 
 - **Screens & Device must be awake**
-- **At least one enabled receiver must be present**
+- **At least one receiver must be present**
 - **HIDEventDispatcher is not suspended**
 - **HIDEventDispatcher is enabled**
 - **Accessibility API access must have been granted:** Access to the macOS Accessibility API must be granted by the 
