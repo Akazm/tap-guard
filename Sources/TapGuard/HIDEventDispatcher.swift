@@ -176,7 +176,7 @@ public final class HIDEventDispatcher: Sendable {
     public var dispatchingPrerequisites: HIDEventDispatcherEnabledPrerequisite {
         systemPrerequisites.withLock { $0 }
             .union(isEnabled() ? [.enabled] : [])
-            .union(!getActiveReceivers().isEmpty ? [.hasReceivers] : [])
+            .union(!getReceivers().isEmpty ? [.hasReceivers] : [])
             .union(suspensions.withLock { $0 }.isEmpty ? [.allSuspensionsReleased] : [])
     }
 
@@ -238,8 +238,12 @@ public final class HIDEventDispatcher: Sendable {
         return Unmanaged.passUnretained(event)
     }
 
-    func getActiveReceivers() -> [AnyHIDEventReceiver] {
+    func getReceivers() -> [AnyHIDEventReceiver] {
         receivers.withLock { $0 }
+    }
+    
+    func getActiveReceivers() -> [AnyHIDEventReceiver] {
+        getReceivers()
             .filter(\.hidEventReceiverEnabled)
             .sorted { $0.hidEventReceiverPriority < $1.hidEventReceiverPriority }
     }
