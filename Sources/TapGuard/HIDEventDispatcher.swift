@@ -1,6 +1,6 @@
 import AllocatedUnfairLockShim
 import AppKit
-import AsyncExtensions
+import AsyncAlgorithms
 import Atomics
 import CoreGraphics
 
@@ -355,12 +355,10 @@ public extension HIDEventDispatcher {
     ) -> HIDEventDispatcher {
         let dispatcher = HIDEventDispatcher(
             enabled: enabled,
-            systemPrerequisiteNotifications: AsyncMergeSequence(
-                [
-                    HIDEventDispatcherEnabledPrerequisite.screensNotification,
-                    HIDEventDispatcherEnabledPrerequisite.workspaceNotifications,
-                    HIDEventDispatcherEnabledPrerequisite.isProcessTrustedNotifications,
-                ]
+            systemPrerequisiteNotifications: AsyncAlgorithms.merge(
+                HIDEventDispatcherEnabledPrerequisite.screensNotification,
+                HIDEventDispatcherEnabledPrerequisite.workspaceNotifications,
+                HIDEventDispatcherEnabledPrerequisite.isProcessTrustedNotifications
             ),
             isProcessTrusted: AXIsProcessTrusted
         )

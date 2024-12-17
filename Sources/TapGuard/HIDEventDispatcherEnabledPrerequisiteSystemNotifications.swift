@@ -1,6 +1,5 @@
 @preconcurrency import AppKit
 import AsyncAlgorithms
-import AsyncExtensions
 import ConcurrencyExtras
 
 private struct ImmutableNotification: Sendable {
@@ -41,7 +40,7 @@ extension HIDEventDispatcherEnabledPrerequisite {
     }
 
     static var screensNotification: AsyncStream<HIDEventDispatcherEnabledPrerequisite.Change> {
-        AsyncMerge2Sequence(
+        merge(
             notifications(
                 named: NSWorkspace.screensDidSleepNotification,
                 notificationCenter: NSWorkspace.shared.notificationCenter
@@ -56,7 +55,7 @@ extension HIDEventDispatcherEnabledPrerequisite {
     }
 
     static var workspaceNotifications: AsyncStream<HIDEventDispatcherEnabledPrerequisite.Change> {
-        AsyncMerge2Sequence(
+        merge(
             notifications(
                 named: NSWorkspace.willSleepNotification, notificationCenter: DistributedNotificationCenter.default()
             )
@@ -69,7 +68,8 @@ extension HIDEventDispatcherEnabledPrerequisite {
     }
 
     static var isProcessTrustedNotifications: AsyncStream<HIDEventDispatcherEnabledPrerequisite.Change> {
-        AsyncLazySequence([AXIsProcessTrusted()])
+        [AXIsProcessTrusted()]
+            .async
             .flatMap { _ in
                 notifications(
                     named: NSAccessibility.Notification.isProcessTrusted,
