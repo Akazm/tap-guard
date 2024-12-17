@@ -55,7 +55,7 @@ public final class HIDEventDispatcher: Sendable {
 
     /// Adds a sync callback with ``PostProcessHIDEventInstruction/pass`` behaviour to the event processing pipeline.
     ///
-    /// - Returns: An object that can be removed from this `HIDEventDispatcher` by calling ``HIDEventReceiverClosure/remove``
+    /// - Returns: An object that can be removed from this ``HIDEventDispatcher`` by calling ``HIDEventReceiverClosure/remove``
     public func addReceiver(
         _ receiver: @escaping @Sendable (CopiedCGEvent) -> Void
     ) -> HIDEventReceiverClosure {
@@ -67,7 +67,7 @@ public final class HIDEventDispatcher: Sendable {
 
     /// Adds a sync callback to the event processing pipeline.
     ///
-    /// - Returns: An object that can be removed from this `HIDEventDispatcher` by calling ``HIDEventReceiverClosure/remove``
+    /// - Returns: Object that can may removed from this ``HIDEventDispatcher`` by calling ``HIDEventReceiverClosure/remove``
     public func addReceiver(
         _ receiver: @escaping @Sendable (CopiedCGEvent) -> PostProcessHIDEventInstruction
     ) -> HIDEventReceiverClosure {
@@ -85,7 +85,7 @@ public final class HIDEventDispatcher: Sendable {
     /// Adds an async callback with ``PostProcessHIDEventInstruction/pass`` behaviour to the event processing pipeline.
     ///
     /// - Warning: Do not await time-intensive tasks. See: ``HIDEventProcessor/async(_:)``
-    /// - Returns: An object that can be removed from this `HIDEventDispatcher` by calling ``HIDEventReceiverClosure/remove``
+    /// - Returns: Object that may be removed from this ``HIDEventDispatcher`` by calling ``HIDEventReceiverClosure/remove``
     public func addReceiver(
         _ receiver: @escaping @Sendable (CopiedCGEvent) async -> Void
     ) -> HIDEventReceiverClosure {
@@ -98,7 +98,7 @@ public final class HIDEventDispatcher: Sendable {
     /// Adds an async callback to the event processing pipeline.
     ///
     /// - Warning: Do not `await` *heavy* tasks. See: ``HIDEventProcessor/async(_:)``
-    /// - Returns: An object that can be removed from this `HIDEventDispatcher` by calling ``HIDEventReceiverClosure/remove``
+    /// - Returns: Object that may be removed from this ``HIDEventDispatcher`` by calling ``HIDEventReceiverClosure/remove``
     public func addReceiver(
         _ receiver: @escaping @Sendable (CopiedCGEvent) async -> PostProcessHIDEventInstruction
     ) -> HIDEventReceiverClosure {
@@ -115,7 +115,7 @@ public final class HIDEventDispatcher: Sendable {
 
     /// Adds a ``HIDEventReceiver`` to the event processing pipeline.
     ///
-    /// - Returns: An object that can be removed from this `HIDEventDispatcher` by calling ``HIDEventReceiverProxy/remove``
+    /// - Returns: Proxy that may be removed from the event processing pipeline by calling ``DisposableHIDEventReceiver/remove``
     public func addReceiver(_ receiver: HIDEventReceiver & AnyObject) -> AnyHIDEventReceiver {
         let box = UncheckedWeakSendable<HIDEventReceiverProxy>(nil)
         let newReceiver = HIDEventReceiverProxy(actual: receiver) { [weak self] in
@@ -158,21 +158,25 @@ public final class HIDEventDispatcher: Sendable {
         toggleEventProcessing()
     }
 
-    /// `true` if event processing is enabled, `false` otherwise
+    /// A Boolean value that determines whether the dispatcher is enabled.
+    ///
+    /// - Returns:`true` if event processing is enabled, `false` otherwise
     public func isEnabled() -> Bool {
         enabledOverride.load(ordering: .sequentiallyConsistent)
     }
 
-    /// `true` if event processing is currently suspended, `false` otherwise.
+    /// A Boolean value that determines whether the dispatcher is suspended.
     ///
     /// See also: ``HIDEventDispatcher/acquireSuspension()``
+    /// 
+    /// - Returns: `true` if event processing is currently suspended, `false` otherwise
     public func isSuspended() -> Bool {
         !suspensions.withLock { $0 }.isEmpty
     }
 
     /// The current set of satisfied ``HIDEventDispatcherEnabledPrerequisite``s.
     ///
-    /// A `HIDEventDispatcher` will automatically attempt to disable it's event source
+    /// A ``HIDEventDispatcher`` will automatically attempt to disable it's event source
     /// (see: ``HIDEventDispatcherEventSource/setEnabled(_:)``) when this property does not evaluate to
     /// ``HIDEventDispatcherEnabledPrerequisite/all``.
     public var dispatchingPrerequisites: HIDEventDispatcherEnabledPrerequisite {
