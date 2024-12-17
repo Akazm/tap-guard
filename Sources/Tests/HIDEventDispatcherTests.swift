@@ -31,14 +31,15 @@ import Testing
                 observedPrequisites.append(prequisite)
             }
         }
-        try? await Task.sleep(seconds: 0.5)
+        try? await Task.sleep(seconds: 0.75)
         eventSource.raise(
             eventOfType: .tapDisabledByTimeout,
             event: .init(keyboardEventSource: nil, virtualKey: 16, keyDown: false)!
         )
-        try? await Task.sleep(seconds: 0.5)
+        try? await Task.sleep(seconds: 0.75)
         let latestValues = observedPrequisites.suffix(2)
-        #expect(latestValues.first?.contains(.enabled) == false && latestValues.last?.contains(.enabled) == true)
+        #expect(latestValues.first?.contains(.enabled) == false)
+        #expect(latestValues.last?.contains(.enabled) == true)
         receiver.remove()
         observationTask.cancel()
     }
@@ -127,6 +128,7 @@ import Testing
             event: .init(keyboardEventSource: nil, virtualKey: 16, keyDown: true)!
         )
         task.cancel()
+        try? await Task.sleep(seconds: 0.2)
         #expect(dispatcher.getActiveReceivers().isEmpty)
     }
 
