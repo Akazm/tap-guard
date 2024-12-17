@@ -27,7 +27,9 @@ public final class HIDEventDispatcher: Sendable {
         observeAndApplySystemPrerequisites(usingStream: systemPrerequisiteNotifications)
     }
 
-    /// [AsyncStream](https://developer.apple.com/documentation/swift/asyncstream) of ``CopiedCGEvent``s
+    /// [AsyncStream](https://developer.apple.com/documentation/swift/asyncstream) of ``CopiedCGEvent``s.
+    ///
+    /// The backing ``HIDEventReceiver`` will automatically be removed from the event processing pipeline when the iteration is cancelled.
     public func stream(
         withPriority priority: UInt64 = .max
     ) -> AsyncStream<CopiedCGEvent> {

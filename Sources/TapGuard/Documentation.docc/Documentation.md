@@ -1,5 +1,9 @@
 # TapGuard
 
+@Metadata {
+   @TechnologyRoot
+}
+
 TapGuard provides a Swift 6 ready, thread-safe abstraction layer for asynchronous processing of [CGEvents](https://developer.apple.com/documentation/coregraphics/cgevent) 
 with support for macOS Catalina (`.macOS(.v10_15)`) and above. 
 
@@ -31,9 +35,9 @@ Then, add `TapGuard` to your target's dependencies:
 
 ## Usage
 
-### Initialize [`HIDEventDispatcher`](https://akazm.github.io/osx-tap-guard/documentation/tapguard/hideventdispatcher)
+### Initialize ``HIDEventDispatcher``
 
-TapGuard provides a convenient way to initialize a `HIDEventDispatcher` with a backing 
+TapGuard provides a convenient way to initialize a ``HIDEventDispatcher`` with a backing 
 [CGEventTap](https://developer.apple.com/documentation/coregraphics/1454426-cgeventtapcreate).
 
 ```swift
@@ -58,7 +62,7 @@ For event processing to function as one might expect already by now, several con
 application's user. Prompting the user to grant access is out of scope for this package, but a `HIDEventDispatcher` 
 attributes automatically for the Accessibility API access status. 
 
-_Unless_ or _when_ all of the above conditions have been met, a `HIDEventDispatcher` will automatically _remove_ or 
+_Unless_ or _when_ all of the above conditions have been met, a ``HIDEventDispatcher`` will automatically _remove_ or 
 _install_ the backing CGEventTap. 
 
 For more information, see
@@ -67,7 +71,7 @@ For more information, see
 
 ### Processing events
 
-`HIDEventDispatcher` allows you to register multiple 
+``HIDEventDispatcher`` allows you to register multiple 
 [event receivers](https://akazm.github.io/osx-tap-guard/documentation/tapguard/hideventreceiver). This is also refered 
 to as *event processing pipeline*.
 
@@ -83,8 +87,7 @@ Task {
 }
 ```
 
-For more information, see 
-[stream(withPriority:)](https://akazm.github.io/osx-tap-guard/documentation/tapguard/hideventdispatcher/stream(withpriority:))
+For more information, see ``HIDEventDispatcher/stream(withPriority:)``
 
 #### Custom conformance to `HIDEventReceiver & AnyObject`
 
@@ -111,12 +114,11 @@ class MyReceiver: HIDEventReceiver {
 ```
 For more information, see [HIDEventReceiver](https://akazm.github.io/osx-tap-guard/documentation/tapguard/hideventreceiver).
 
-Event processing happens within the closure specified for the defined 
-[HIDEventReceiver](https://akazm.github.io/osx-tap-guard/documentation/tapguard/hideventreceiver). In the example, 
-the closure returns a [PostProcessHIDEventInstruction](https://akazm.github.io/osx-tap-guard/documentation/tapguard/postprocesshideventinstruction) 
+Event processing happens within the closure specified for the defined ``HIDEventReceiver`` In the example, 
+the closure returns a ``PostProcessHIDEventInstruction`` 
 to specify how to postprocess the event after the closure exited.
 
-To enable async event processing, use an `async` processor instead.
+To enable async event processing, use an ``HIDEventProcessor/async(_:)`` processor instead.
 
 ```swift
 class MyAsyncReceiver: HIDEventReceiver {
@@ -140,7 +142,7 @@ class MyAsyncReceiver: HIDEventReceiver {
     }
 }
 ```
-For more information, see [`HIDEventProcessor`](https://akazm.github.io/osx-tap-guard/documentation/tapguard/hideventprocessor).
+For more information, see ``HIDEventProcessor``.
 
 #### Using closures
 
@@ -162,7 +164,7 @@ let receiver = dispatcher.addReceiver { event in
     return .pass
 }
 ```
-For more information, see [`HIDEventDispatcher`](https://akazm.github.io/osx-tap-guard/documentation/tapguard/hideventdispatcher).
+For more information, see ``HIDEventDispatcher``.
 
 #### Removing receivers
 
@@ -177,7 +179,7 @@ let registration = dispatcher.addReceiver(myReceiver)
 registration.remove()
 ```
 
-For more information, see [`DisposableHIDEventReceiver`](https://akazm.github.io/osx-tap-guard/documentation/tapguard/disposablehideventreceiver).
+For more information, see ``DisposableHIDEventReceiver``.
 
 ### Enable or disable dispatcher
 
@@ -200,7 +202,7 @@ let suspension = dispatcher.acquireSuspension()
 suspension.release()
 ```
 
-For more information, see [`acquireSuspension()`](https://akazm.github.io/osx-tap-guard/documentation/tapguard/hideventdispatcher/acquiresuspension()).
+For more information, see ``acquireSuspension()``.
 
 ### Notes on async event processing
 
@@ -209,9 +211,9 @@ to await time-intensive tasks that rely on networking, File I/O or CPU-intensive
 
 Doing so nonetheless might result in the following: 
 
-1. **MacOS disables a dispatcher's backing event tap ([kCGEventTapDisabledByTimeout](https://developer.apple.com/documentation/coregraphics/cgeventtype/kcgeventtapdisabledbytimeout?language=swift)).** 
+1. **MacOS disables a dispatcher's backing event tap ([kCGEventTapDisabledByTimeout](https://developer.apple.com/documentation/coregraphics/cgeventtype/kcgeventtapdisabledbytimeout?language=swift)). ** 
 It will be re-enabled automatically.
-2. **MacOS ignores the `PostProcessHIDEventInstruction`**, effectively replacing it with [.bypass](https://akazm.github.io/osx-tap-guard/documentation/tapguard/postprocesshideventinstruction/bypass) behaviour. 
+2. **MacOS ignores the `PostProcessHIDEventInstruction`**, effectively replacing it with ``PostProcessHIDEventInstruction/bypass`` behaviour. 
 
 ## Documentation
 
