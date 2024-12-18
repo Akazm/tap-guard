@@ -49,9 +49,8 @@ public protocol DisposableHIDEventReceiver: Sendable {
     var remove: @Sendable () -> Void { get }
 }
 
-/// Wraps a closure acting as a ``HIDEventDispatcher``
-///
-/// See also: ``HIDEventReceiver``
+/// Encapsulates a closure - conforming to either ``HIDEventProcessor/sync(_:)`` or ``HIDEventProcessor/async(_:)`` argument signature -
+/// in a ``HIDEventReceiver``
 public final class HIDEventReceiverClosure: DisposableHIDEventReceiver, MutableHIDEventReceiver {
     private let eventReceiverPriority: AllocatedUnfairLock<UInt64> = .init(initialState: .init(UInt32.max))
     private let eventReceiverEnabled: AllocatedUnfairLock<Bool> = .init(initialState: true)
