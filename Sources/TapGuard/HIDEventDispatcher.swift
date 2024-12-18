@@ -53,7 +53,7 @@ public final class HIDEventDispatcher: Sendable {
         }
     }
 
-    /// Adds a sync callback with ``PostProcessHIDEventInstruction/pass`` behaviour to the event processing pipeline.
+    /// Adds a sync callback to the event processing pipeline.
     ///
     /// - Parameters:
     ///    - behaviour: Instructs the ``HIDEventDispatcher`` how to postprocess a received event
