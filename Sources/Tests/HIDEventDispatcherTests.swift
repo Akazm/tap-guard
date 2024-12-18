@@ -5,7 +5,6 @@ import Foundation
 import Testing
 
 @Suite("HIDEventDispatcher Tests") struct HIDEventDispatcherTests {
-    
     @Test("HIDEventDispatcher will be automatically re-enabled") func reenableDispatcher() async throws {
         let (dispatcher, eventSource, _) = makeTestDispatcher()
         var observedPrequisites = [HIDEventDispatcherEnabledPrerequisite]()
@@ -43,7 +42,7 @@ import Testing
         receiver.remove()
         observationTask.cancel()
     }
-    
+
     @Test("HIDEventReceiver proxy") func hidEventReceiverProxy() async throws {
         let (dispatcher, _, _) = makeTestDispatcher()
         final class Receiver: HIDEventReceiver {
