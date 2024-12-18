@@ -55,13 +55,35 @@ public final class HIDEventDispatcher: Sendable {
 
     /// Adds a sync callback with ``PostProcessHIDEventInstruction/pass`` behaviour to the event processing pipeline.
     ///
+    /// - Parameters:
+    ///    - behaviour: Instructs the ``HIDEventDispatcher`` how to postprocess a received event
+    ///
     /// - Returns: An object that can be removed from this ``HIDEventDispatcher`` by calling ``HIDEventReceiverClosure/remove``
     public func addReceiver(
+        withPostProcessBehaviour behaviour: PostProcessHIDEventInstruction = .pass,
         _ receiver: @escaping @Sendable (CopiedCGEvent) -> Void
     ) -> HIDEventReceiverClosure {
         addReceiver { event in
             receiver(event)
-            return .pass
+            return behaviour
+        }
+    }
+    
+    /// Adds an async callback to the event processing pipeline.
+    ///
+    /// - Parameters:
+    ///    - behaviour: Instructs the ``HIDEventDispatcher`` how to postprocess a received event
+    ///
+    /// - Returns: Object that may be removed from this ``HIDEventDispatcher`` by calling ``HIDEventReceiverClosure/remove``
+    public func addReceiver(
+        withPostProcessBehaviour behaviour: PostProcessHIDEventInstruction = .pass,
+        _ receiver: @escaping @Sendable (CopiedCGEvent) async -> Void
+    ) -> HIDEventReceiverClosure {
+        addReceiver { event in
+            Task {
+                await receiver(event)
+            }
+            return behaviour
         }
     }
 
@@ -80,19 +102,6 @@ public final class HIDEventDispatcher: Sendable {
         box.value = newReceiver
         attachReceiver(newReceiver)
         return newReceiver
-    }
-
-    /// Adds an async callback with ``PostProcessHIDEventInstruction/pass`` behaviour to the event processing pipeline.
-    ///
-    /// - Warning: Do not await time-intensive tasks. See: ``HIDEventProcessor/async(_:)``
-    /// - Returns: Object that may be removed from this ``HIDEventDispatcher`` by calling ``HIDEventReceiverClosure/remove``
-    public func addReceiver(
-        _ receiver: @escaping @Sendable (CopiedCGEvent) async -> Void
-    ) -> HIDEventReceiverClosure {
-        addReceiver { event in
-            await receiver(event)
-            return .pass
-        }
     }
 
     /// Adds an async callback to the event processing pipeline.
@@ -168,7 +177,7 @@ public final class HIDEventDispatcher: Sendable {
     /// A Boolean value that determines whether the dispatcher is suspended.
     ///
     /// See also: ``HIDEventDispatcher/acquireSuspension()``
-    /// 
+    ///
     /// - Returns: `true` if event processing is currently suspended, `false` otherwise
     public func isSuspended() -> Bool {
         !suspensions.withLock { $0 }.isEmpty
@@ -247,7 +256,7 @@ public final class HIDEventDispatcher: Sendable {
     func getReceivers() -> [AnyHIDEventReceiver] {
         receivers.withLock { $0 }
     }
-    
+
     func getActiveReceivers() -> [AnyHIDEventReceiver] {
         getReceivers()
             .filter(\.hidEventReceiverEnabled)
