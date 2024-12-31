@@ -1,8 +1,7 @@
 @preconcurrency import AppKit
 import AsyncAlgorithms
-import ConcurrencyExtras
 
-private struct ImmutableNotification: Sendable {
+struct ImmutableNotification: Sendable {
     let name: Notification.Name
 
     init(_ notification: Notification) {
@@ -33,13 +32,23 @@ private extension NSAccessibility.Notification {
     static let isProcessTrusted = NSNotification.Name("com.apple.accessibility.api")
 }
 
+typealias NotificationToggleSequence = AsyncMerge2Sequence<
+    AsyncMapSequence<AsyncStream<ImmutableNotification>, HIDEventDispatcherEnabledPrerequisite.Change>,
+    AsyncMapSequence<AsyncStream<ImmutableNotification>, HIDEventDispatcherEnabledPrerequisite.Change>
+>
+
+typealias IsProcessTrustedNotifications = AsyncMapSequence<
+    AsyncFlatMapSequence<AsyncSyncSequence<[Bool]>, AsyncScanSequence<AsyncStream<ImmutableNotification>, ()>>,
+    HIDEventDispatcherEnabledPrerequisite.Change
+>
+
 extension HIDEventDispatcherEnabledPrerequisite {
     public enum Change: Sendable, Equatable {
         case add(HIDEventDispatcherEnabledPrerequisite)
         case remove(HIDEventDispatcherEnabledPrerequisite)
     }
 
-    static var screensNotification: AsyncStream<HIDEventDispatcherEnabledPrerequisite.Change> {
+    static var screensNotification: NotificationToggleSequence {
         merge(
             notifications(
                 named: NSWorkspace.screensDidSleepNotification,
@@ -51,10 +60,10 @@ extension HIDEventDispatcherEnabledPrerequisite {
                 notificationCenter: NSWorkspace.shared.notificationCenter
             )
             .map { _ in HIDEventDispatcherEnabledPrerequisite.Change.add(.screensAwake) }
-        ).eraseToStream()
+        )
     }
 
-    static var workspaceNotifications: AsyncStream<HIDEventDispatcherEnabledPrerequisite.Change> {
+    static var workspaceNotifications: NotificationToggleSequence {
         merge(
             notifications(
                 named: NSWorkspace.willSleepNotification, notificationCenter: DistributedNotificationCenter.default()
@@ -64,10 +73,10 @@ extension HIDEventDispatcherEnabledPrerequisite {
                 named: NSWorkspace.didWakeNotification, notificationCenter: DistributedNotificationCenter.default()
             )
             .map { _ in HIDEventDispatcherEnabledPrerequisite.Change.add(.deviceAwake) }
-        ).eraseToStream()
+        )
     }
 
-    static var isProcessTrustedNotifications: AsyncStream<HIDEventDispatcherEnabledPrerequisite.Change> {
+    static var isProcessTrustedNotifications: IsProcessTrustedNotifications {
         [AXIsProcessTrusted()]
             .async
             .flatMap { _ in
@@ -83,6 +92,6 @@ extension HIDEventDispatcherEnabledPrerequisite {
                 return AXIsProcessTrusted()
                     ? HIDEventDispatcherEnabledPrerequisite.Change.add(.axGranted)
                     : HIDEventDispatcherEnabledPrerequisite.Change.remove(.axGranted)
-            }.eraseToStream()
+            }
     }
 }
