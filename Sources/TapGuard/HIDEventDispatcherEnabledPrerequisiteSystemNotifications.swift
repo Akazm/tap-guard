@@ -38,7 +38,7 @@ typealias NotificationToggleSequence = AsyncMerge2Sequence<
 >
 
 typealias IsProcessTrustedNotifications = AsyncMapSequence<
-    AsyncFlatMapSequence<AsyncSyncSequence<[Bool]>, AsyncScanSequence<AsyncStream<ImmutableNotification>, ()>>,
+    AsyncFlatMapSequence<AsyncSyncSequence<[Bool]>, AsyncScanSequence<AsyncStream<ImmutableNotification>, Void>>,
     HIDEventDispatcherEnabledPrerequisite.Change
 >
 

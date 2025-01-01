@@ -6,11 +6,11 @@ typealias EventTapSourceArgs = (eventsOfInterest: CGEventMask, eventTapLocation:
 private class OrderedLock<State>: @unchecked Sendable {
     private let serialQueue = DispatchQueue(label: "com.example.OrderedLock")
     private var state: State
-    
+
     init(initialState: State) {
-        self.state = initialState
+        state = initialState
     }
-    
+
     func withLock<Out>(_ task: @Sendable @escaping (inout State) -> Out) -> Out {
         serialQueue.asyncAndWait {
             var mutableState = self.state
@@ -20,7 +20,6 @@ private class OrderedLock<State>: @unchecked Sendable {
         }
     }
 }
-
 
 /// A ``HIDEventDispatcherEventSource`` with a backing
 /// [CGEventTap](https://developer.apple.com/documentation/coregraphics/1454426-cgeventtapcreate)

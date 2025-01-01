@@ -1,6 +1,6 @@
-import Mutex
 import CoreGraphics
 import Foundation
+import Mutex
 @testable import TapGuard
 import Testing
 

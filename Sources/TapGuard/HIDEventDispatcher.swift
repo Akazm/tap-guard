@@ -66,7 +66,7 @@ public final class HIDEventDispatcher: Sendable {
             return behaviour
         }
     }
-    
+
     /// Adds an async callback to the event processing pipeline.
     ///
     /// - Parameters:
