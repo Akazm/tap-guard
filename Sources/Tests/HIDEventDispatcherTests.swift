@@ -1,4 +1,4 @@
-import AllocatedUnfairLockShim
+import Mutex
 import CoreGraphics
 import Foundation
 @testable import TapGuard
@@ -143,7 +143,7 @@ import Testing
 
     @Test("Release a dispatcher suspension") func releaseDispatcherSuspension() async throws {
         let (dispatcher, eventSource, _) = makeTestDispatcher()
-        let lockedObservedEvents = AllocatedUnfairLock(uncheckedState: [String]())
+        let lockedObservedEvents = Mutex([String]())
         _ = dispatcher.addReceiver { _ in
             lockedObservedEvents.withLock {
                 $0.append("receiverA")
@@ -168,7 +168,7 @@ import Testing
 
     @Test("Suspend a dispatcher") func suspendDispatcher() async throws {
         let (dispatcher, eventSource, _) = makeTestDispatcher()
-        let lockedObservedEvents = AllocatedUnfairLock(uncheckedState: [String]())
+        let lockedObservedEvents = Mutex([String]())
         _ = dispatcher.addReceiver { _ in
             lockedObservedEvents.withLock {
                 $0.append("receiverA")
@@ -186,7 +186,7 @@ import Testing
 
     @Test("Disable a receiver") func disableAReceiver() async throws {
         let (dispatcher, eventSource, _) = makeTestDispatcher()
-        let lockedObservedEvents = AllocatedUnfairLock(uncheckedState: [String]())
+        let lockedObservedEvents = Mutex([String]())
         let receiverA = dispatcher.addReceiver { _ in
             lockedObservedEvents.withLock {
                 $0.append("receiverA")
@@ -215,7 +215,7 @@ import Testing
     @Test("Prioritization of receivers changes processing order")
     func priotizationOfReceiversChangesOrder() async throws {
         let (dispatcher, eventSource, _) = makeTestDispatcher()
-        let lockedObservedEvents = AllocatedUnfairLock(uncheckedState: [String]())
+        let lockedObservedEvents = Mutex([String]())
         let receiverA = dispatcher.addReceiver { _ in
             lockedObservedEvents.withLock {
                 $0.append("receiverA")

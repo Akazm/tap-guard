@@ -1,4 +1,3 @@
-import AllocatedUnfairLockShim
 import CoreGraphics
 import Foundation
 

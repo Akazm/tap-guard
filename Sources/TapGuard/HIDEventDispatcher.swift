@@ -1,27 +1,25 @@
-import AllocatedUnfairLockShim
 import AppKit
 import AsyncAlgorithms
 import Atomics
 import CoreGraphics
+import Mutex
 
 /// Provides an API for asynchronous, thread-safe processing of
 /// [CGEvents](https://developer.apple.com/documentation/coregraphics/cgevent)
 public final class HIDEventDispatcher: Sendable {
-    private let systemPrerequisites: AllocatedUnfairLock<HIDEventDispatcherEnabledPrerequisite>
-    private let receivers = AllocatedUnfairLock(initialState: [AnyHIDEventReceiver]())
+    private let systemPrerequisites: Mutex<HIDEventDispatcherEnabledPrerequisite>
+    private let receivers = Mutex([AnyHIDEventReceiver]())
     private let isProcessTrusted: @Sendable () -> Bool
     private let enabledOverride: ManagedAtomic<Bool>
-    private let suspensions = AllocatedUnfairLock(initialState: Set<UUID>())
-    private let eventSource = AllocatedUnfairLock<(any HIDEventDispatcherEventSource)?>(initialState: nil)
+    private let suspensions = Mutex(Set<UUID>())
+    private let eventSource = Mutex<(any HIDEventDispatcherEventSource)?>(nil)
 
     init<SystemPrerequisiteNotifications: AsyncSequence & Sendable>(
         enabled: Bool,
         systemPrerequisiteNotifications: SystemPrerequisiteNotifications,
         isProcessTrusted: @escaping @Sendable () -> Bool
     ) where SystemPrerequisiteNotifications.Element == HIDEventDispatcherEnabledPrerequisite.Change {
-        systemPrerequisites = .init(
-            initialState: Self.defaultSystemPrerequisites(isProcessTrusted: isProcessTrusted())
-        )
+        systemPrerequisites = .init(Self.defaultSystemPrerequisites(isProcessTrusted: isProcessTrusted()))
         enabledOverride = .init(enabled)
         self.isProcessTrusted = isProcessTrusted
         observeAndApplySystemPrerequisites(usingStream: systemPrerequisiteNotifications)

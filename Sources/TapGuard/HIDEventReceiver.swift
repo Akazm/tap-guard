@@ -1,6 +1,6 @@
-import AllocatedUnfairLockShim
 import AppKit
 import CoreGraphics
+import Mutex
 
 /// Wrapped event processing closure, distinguishing between either an async or sync implementation
 public enum HIDEventProcessor: Sendable {
@@ -52,8 +52,8 @@ public protocol DisposableHIDEventReceiver: Sendable {
 /// Encapsulates a closure - conforming to either ``HIDEventProcessor/sync(_:)`` or ``HIDEventProcessor/async(_:)`` argument signature -
 /// in a ``HIDEventReceiver``
 public final class HIDEventReceiverClosure: DisposableHIDEventReceiver, MutableHIDEventReceiver {
-    private let eventReceiverPriority: AllocatedUnfairLock<UInt64> = .init(initialState: .init(UInt32.max))
-    private let eventReceiverEnabled: AllocatedUnfairLock<Bool> = .init(initialState: true)
+    private let eventReceiverPriority: Mutex<UInt64> = .init(.init(UInt32.max))
+    private let eventReceiverEnabled: Mutex<Bool> = .init(true)
     /// See: ``HIDEventReceiver/hidEventProcessor``
     public let receiver: HIDEventProcessor
     /// See: ``DisposableHIDEventReceiver/remove``

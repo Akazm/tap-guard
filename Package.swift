@@ -13,16 +13,17 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/Akazm/allocated-unfair-lock", .upToNextMajor(from: "1.2.0")),
+        .package(url: "https://github.com/swhitty/swift-mutex", .upToNextMajor(from: "0.0.5")),
         .package(url: "https://github.com/apple/swift-async-algorithms", .upToNextMajor(from: "1.0.0")),
         .package(url: "https://github.com/apple/swift-atomics.git", .upToNextMajor(from: "1.2.0")),
         .package(url: "https://github.com/nicklockwood/SwiftFormat", .upToNextMajor(from: "0.55.0")),
     ],
     targets: [
         .target(
+            
             name: "TapGuard",
             dependencies: [
-                .product(name: "AllocatedUnfairLockShim", package: "allocated-unfair-lock"),
+                .product(name: "Mutex", package: "swift-mutex"),
                 .product(name: "AsyncAlgorithms", package: "swift-async-algorithms"),
                 .product(name: "Atomics", package: "swift-atomics"),
             ],
