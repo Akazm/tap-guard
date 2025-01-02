@@ -220,26 +220,24 @@ public final class HIDEventDispatcher: Sendable {
             guard let eventCopy else {
                 continue
             }
-            var result: PostProcessHIDEventInstruction = .pass
+            var postprocessInstruction: PostProcessHIDEventInstruction = .pass
             switch nextObserver.hidEventProcessor {
                 case let .sync(closure):
-                    result = closure(eventCopy)
+                    postprocessInstruction = closure(eventCopy)
                 case let .async(closure):
                     let semaphore = DispatchSemaphore(value: 0)
-                    let box = UncheckedSendable<PostProcessHIDEventInstruction?>(nil)
                     Task {
                         /*
                           Considered an anti-pattern in most cases, using a semaphore allows us to
                           1. process events on a designated background thread by default,
                           2. utilize modern Swift concurrency features, such as `async` or `actor`
                          */
-                        box.value = await closure(eventCopy)
+                        postprocessInstruction = await closure(eventCopy)
                         semaphore.signal()
                     }
                     _ = semaphore.wait(timeout: .distantFuture)
-                    result = box.value ?? .pass
             }
-            switch result {
+            switch postprocessInstruction {
                 case .retain:
                     return nil
                 case .bypass:
