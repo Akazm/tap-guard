@@ -56,7 +56,7 @@ extension HIDEventDispatcherEnabledPrerequisite {
             )
             .map { _ in HIDEventDispatcherEnabledPrerequisite.Change.remove(.screensAwake) },
             notifications(
-                named: NSWorkspace.screensDidSleepNotification,
+                named: NSWorkspace.screensDidWakeNotification,
                 notificationCenter: NSWorkspace.shared.notificationCenter
             )
             .map { _ in HIDEventDispatcherEnabledPrerequisite.Change.add(.screensAwake) }
@@ -66,11 +66,11 @@ extension HIDEventDispatcherEnabledPrerequisite {
     static var workspaceNotifications: NotificationToggleSequence {
         merge(
             notifications(
-                named: NSWorkspace.willSleepNotification, notificationCenter: DistributedNotificationCenter.default()
+                named: NSWorkspace.willSleepNotification, notificationCenter: NSWorkspace.shared.notificationCenter
             )
             .map { _ in HIDEventDispatcherEnabledPrerequisite.Change.remove(.deviceAwake) },
             notifications(
-                named: NSWorkspace.didWakeNotification, notificationCenter: DistributedNotificationCenter.default()
+                named: NSWorkspace.didWakeNotification, notificationCenter: NSWorkspace.shared.notificationCenter
             )
             .map { _ in HIDEventDispatcherEnabledPrerequisite.Change.add(.deviceAwake) }
         )

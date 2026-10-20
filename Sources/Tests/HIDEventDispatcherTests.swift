@@ -7,7 +7,7 @@ import Testing
 @Suite("HIDEventDispatcher Tests") struct HIDEventDispatcherTests {
     @Test("HIDEventDispatcher will be automatically re-enabled") func reenableDispatcher() async throws {
         let (dispatcher, eventSource, _) = makeTestDispatcher()
-        var observedPrequisites = [HIDEventDispatcherEnabledPrerequisite]()
+        let observedPrequisites = Mutex([HIDEventDispatcherEnabledPrerequisite]())
         let observationStream = AsyncStream<HIDEventDispatcherEnabledPrerequisite> { [weak dispatcher] continuation in
             guard let dispatcher else {
                 return
@@ -27,7 +27,7 @@ import Testing
         let receiver = dispatcher.addReceiver { _ in }
         let observationTask = Task {
             for await prequisite in observationStream {
-                observedPrequisites.append(prequisite)
+                observedPrequisites.withLock { $0.append(prequisite) }
             }
         }
         try? await Task.sleep(seconds: 0.75)
@@ -36,7 +36,7 @@ import Testing
             event: .init(keyboardEventSource: nil, virtualKey: 16, keyDown: false)!
         )
         try? await Task.sleep(seconds: 0.75)
-        let latestValues = observedPrequisites.suffix(2)
+        let latestValues = observedPrequisites.withLock { $0 }.suffix(2)
         #expect(latestValues.first?.contains(.enabled) == false)
         #expect(latestValues.last?.contains(.enabled) == true)
         receiver.remove()
