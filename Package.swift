@@ -20,9 +20,14 @@ let package = Package(
     ],
     targets: [
         .target(
+            name: "CMultitouchSupport",
+            path: "Sources/CMultitouchSupport"
+        ),
+        .target(
             
             name: "TapGuard",
             dependencies: [
+                "CMultitouchSupport",
                 .product(name: "Mutex", package: "swift-mutex"),
                 .product(name: "AsyncAlgorithms", package: "swift-async-algorithms"),
                 .product(name: "Atomics", package: "swift-atomics"),
@@ -32,7 +37,8 @@ let package = Package(
         .testTarget(
             name: "TapGuardTests",
             dependencies: [
-                "TapGuard"
+                "TapGuard",
+                "CMultitouchSupport"
             ],
             path: "Sources/Tests"
         )
